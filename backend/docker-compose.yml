@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8000:8000"
+    depends_on:
+      - resume-service
+      - career-service
+      - interview-service
+      - multimodal-service
+    environment:
+      - RESUME_SERVICE_URL=http://resume-service:8001
+      - CAREER_SERVICE_URL=http://career-service:8002
+      - INTERVIEW_SERVICE_URL=http://interview-service:8003
+      - MULTIMODAL_SERVICE_URL=http://multimodal-service:8004
+
+  resume-service:
+    build: ./resume-service
+    ports:
+      - "8001:8001"
+
+  career-service:
+    build: ./career-service
+    ports:
+      - "8002:8002"
+
+  interview-service:
+    build: ./interview-service
+    ports:
+      - "8003:8003"
+    environment:
+      - GOOGLE_API_KEY=AIzaSyBOECsI3hj7ZV42Qp5InRR8tyqI5JWgpso
+
+  multimodal-service:
+    build: ./multimodal-service
+    ports:
+      - "8004:8004"
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: career_coach
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
